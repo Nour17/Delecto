@@ -44,10 +44,20 @@ contract Elections {
             "This candidate is already registered");
         else
             require(!Voters[_address].exists,
-            "This voder is already registered");
+            "This voter is already registered");
         _;
     }
 
+    modifier Registered(string memory _type, address _address) {
+        if(keccak256(abi.encodePacked(_type)) == keccak256(abi.encodePacked("Candidate")))
+            require(Candidates[_address].exists,
+            "This candidate is not registered");
+        else
+            require(Voters[_address].exists,
+            "This voter is not registered");
+        _;
+    }
+    
     modifier addingCandidatePhase() {
         require((block.timestamp > addCandidatesPhaseStart && block.timestamp < addCandidatesPhaseEnd),
         "Addidng Candidates phase has ended");
@@ -56,7 +66,7 @@ contract Elections {
 
     modifier VotingPhase() {
         require((block.timestamp > votingPhaseStart && block.timestamp < votingPhaseEnd),
-        "Voding phase has ended");
+        "Voting phase has ended");
         _;
     }
 
@@ -99,16 +109,19 @@ contract Elections {
         emit ParticipantAdded(msg.sender, _id);
     }
 
-    function DelegateVoter(address _voter) public {
-        require(!Voters[msg.sender].voted, "Voter has already voted");
+    function DelegateVoter(address _voter) public Registered("Voter", msg.sender) Registered("Voter", _voter){
+        require(!Voters[msg.sender].voted, "You have already voted");
+        require(!Voters[_voter].voted, "Delegate have already voted");
+        require(msg.sender != _voter, "Can't delegate to yourself");
 
         Voters[_voter].voteWeight.add(Voters[msg.sender].voteWeight);
         Voters[msg.sender].voteWeight = 0;
+        Voters[msg.sender].voted = true;
         emit DelegateAnotherVoter(msg.sender, _voter, Voters[_voter].voteWeight);
     }
 
-    function Vote(address _candidate) public notRegistered("Candidate", _candidate) VotingPhase(){
-        require(!Voters[msg.sender].voted, "Voter has already voted");
+    function Vote(address _candidate) public notRegistered("Candidate", _candidate) Registered("Voter", msg.sender) VotingPhase(){
+        require(!Voters[msg.sender].voted, "Yop have already voted");
 
         Candidates[_candidate].voteCount.add(Voters[msg.sender].voteWeight);
         Voters[msg.sender].voteWeight = 0;

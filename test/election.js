@@ -5,7 +5,7 @@ var Election = artifacts.require("Elections");
 contract("Election", function(accounts) {
     const truffleAssert = require('truffle-assertions');
     var electionInstance;
-    var addCandidatesPhaseStart = 1564846240;
+    var addCandidatesPhaseStart = 1565006162;
     let addCandidatesPhasePeriod = 86400;
     let votingPhasePeriod = 86400;
 
@@ -58,9 +58,59 @@ contract("Election", function(accounts) {
 
     it("Adding new voter - Invalid(Voter Already registered)", async function() {
         return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[1]}).then(function (result) {
-            assert.equal('0x1', result.receipt.status, "New Candidate Added Successfully");
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
         }).then(async function () {
             await truffleAssert.reverts(electionInstance.RegisterVoter(2, "123456678912345", {from: accounts[1]}));
         });
     });
+
+    it("Delegate voter - Valid", async function() {
+        return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[1]}).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+            return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[2]});
+        }).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+            return electionInstance.DelegateVoter(accounts[2], {from: accounts[1]});
+        }).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "Delegation done");
+        });
+    })
+
+    it("Delegate voter - Invalid( Sender is not registered )", async function() {
+        return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[2]}).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+        }).then(async function(result) {
+            await truffleAssert.reverts(electionInstance.DelegateVoter(accounts[2], {from: accounts[1]}));
+        });
+    })
+
+    it("Delegate voter - Invalid( Receiver is not registered )", async function() {
+        return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[1]}).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+        }).then(async function(result) {
+            await truffleAssert.reverts(electionInstance.DelegateVoter(accounts[1], {from: accounts[2]}));
+        });
+    })
+
+    it("Delegate voter - Invalid( Delegete themself )", async function() {
+        return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[1]}).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+        }).then(async function(result) {
+            await truffleAssert.reverts(electionInstance.DelegateVoter(accounts[1], {from: accounts[1]}));
+        });
+    })
+
+    it("Delegate voter - Invalid( 0 votes left )", async function() {
+        return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[1]}).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+            return electionInstance.RegisterVoter(1, "12345678912345", {from: accounts[2]});
+        }).then(function(result) {
+            assert.equal('0x1', result.receipt.status, "New Voter Added Successfully");
+            return electionInstance.DelegateVoter(accounts[2], {from: accounts[1]});
+        }).then(async function(result) {
+            assert.equal('0x1', result.receipt.status, "Delegation done");
+            await truffleAssert.reverts(electionInstance.DelegateVoter(accounts[2], {from: accounts[1]}));
+            await truffleAssert.reverts(electionInstance.DelegateVoter(accounts[1], {from: accounts[2]}));
+        });
+    })
 });
