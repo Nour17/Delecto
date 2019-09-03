@@ -57,16 +57,16 @@ contract Elections {
             "This voter is not registered");
         _;
     }
-    
+
     modifier addingCandidatePhase() {
         require((block.timestamp > addCandidatesPhaseStart && block.timestamp < addCandidatesPhaseEnd),
-        "Addidng Candidates phase has ended");
+                 block.timestamp > votingPhaseStart ? "Addidng Candidates phase hasn't started" : "Addidng Candidates phase has ended");
         _;
     }
 
     modifier VotingPhase() {
         require((block.timestamp > votingPhaseStart && block.timestamp < votingPhaseEnd),
-        "Voting phase has ended");
+            block.timestamp > votingPhaseStart ? "Voting phase hasn't started" : "Voting phase has ended");
         _;
     }
 
@@ -120,8 +120,9 @@ contract Elections {
         emit DelegateAnotherVoter(msg.sender, _voter, Voters[_voter].voteWeight);
     }
 
-    function Vote(address _candidate) public notRegistered("Candidate", _candidate) Registered("Voter", msg.sender) VotingPhase(){
-        require(!Voters[msg.sender].voted, "Yop have already voted");
+    // Comment Voting phase before automation testing
+    function Vote(address _candidate) public Registered("Candidate", _candidate) Registered("Voter", msg.sender) VotingPhase(){
+        require(!Voters[msg.sender].voted, "You have already voted");
 
         Candidates[_candidate].voteCount.add(Voters[msg.sender].voteWeight);
         Voters[msg.sender].voteWeight = 0;
