@@ -1,0 +1,42 @@
+body{
+    font-family: 'Open Sans Condensed', sans-serif;
+}
+
+
+.force-overflow
+{
+	min-height: 450px;
+}
+
+#wrapper
+{
+	text-align: center;
+	width: 500px;
+	margin: auto;
+}
+
+#style-3
+{
+    overflow: auto; 
+    height: 300px !important;
+}
+
+#style-3::-webkit-scrollbar-track
+{
+    background-color: #F5F5F5;
+}
+
+#style-3::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+#style-3::-webkit-scrollbar-thumb
+{
+	background-color: #000000;
+}
+
+.borderless td, .borderless th {
+    border: none;
+}
