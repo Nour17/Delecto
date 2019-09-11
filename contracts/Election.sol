@@ -25,6 +25,7 @@ contract Elections {
     uint public votingPhaseStart;
     uint public votingPhaseEnd;
 
+    uint _totalCandidates;
     mapping (address => Candidate) public Candidates;
     mapping (address => Voter) public Voters;
 
@@ -82,6 +83,7 @@ contract Elections {
         addCandidatesPhaseEnd = calculatePhaseEnding(_addCandidatesPhaseStart, _addCandidatesPhasePeriod);
         votingPhaseStart = addCandidatesPhaseEnd;
         votingPhaseEnd = calculatePhaseEnding(votingPhaseStart, _votingPhasePeriod);
+        _totalCandidates = 0;
     }
 
     function AddCandidate(address _candidate, uint _id, string memory _ssn) public
@@ -96,6 +98,7 @@ contract Elections {
         Candidates[_candidate].voteCount = 0;
         Candidates[_candidate].exists = true;
 
+        _totalCandidates = _totalCandidates.add(1);
         emit ParticipantAdded(_candidate, _id);
     }
 

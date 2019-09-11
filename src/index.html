@@ -12,14 +12,17 @@
   </head>
   <body >
       <div style="position: absolute; width: 100%; height: 100%;" id="particles-js"></div>
+      
       <div class="py-5 container">
           <div class="text-center mb-3">
               <div>
                   <img class="mb-3" src="images/logo.png" alt="" width="100" height="100">
               </div>
               <div class="alert alert-light" style="background: none !important" role="alert" font>
-                  <sup>ADDRESS</sup>
-                  0x2aA09E0528e8520Adf469E378b23527543d0cfc8
+                  <strong><sup>ADDRESS</sup></strong>
+                  <span id="accountAddress">
+                    0x2aA09E0528e8520Adf469E378b23527543d0cfc8
+                  </span>
               </div>
           </div>
       
@@ -31,28 +34,13 @@
                       <thead>
                         <tr>
                           <th scope="col">#</th>
-                          <th scope="col">First</th>
-                          <th scope="col">Last</th>
-                          <th scope="col">Handle</th>
+                          <th scope="col">Votes</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="candidatesResults">
                         <tr>
                           <th scope="row">1</th>
-                          <td>Mark</td>
-                          <td>Otto</td>
-                          <td>@mdo</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">2</th>
-                          <td>Jacob</td>
-                          <td>Thornton</td>
-                          <td>@fat</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">3</th>
-                          <td colspan="2">Larry the Bird</td>
-                          <td>@twitter</td>
+                          <td>200</td>
                         </tr>
                       </tbody>
                     </table>
@@ -63,8 +51,19 @@
                 <h5>Candidate Info</h5>
                 <div class="card" style="height: 300px; background: none !important">
                     <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      <h5 class="card-title mb-4">offChainId</h5>
+                      <p class="card-text">
+                        <sup>ADDRESS</sup>
+                        0x2aA09E0528e8520Adf469E378b23527543d0cfc8
+                      </p>
+                      <p class="card-text">
+                        <sup>SSN</sup>
+                        189709262435607
+                      </p>
+                      <p class="card-text">
+                        <sup>Votes</sup>
+                        200
+                      </p>
                     </div>
                     <a href="#" class="btn btn-primary m-2">Vote</a>
                   </div>
